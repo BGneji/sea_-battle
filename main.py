@@ -9,6 +9,11 @@ tk = Tk()
 # переменная которая определять запущению окно игры или нет
 app_running = True
 
+# def tesxr():
+#     s = int(input('Введите размер поля: '))
+#     return s
+# q = tesxr()
+
 # размеры окна
 size_canvas_x = 600
 size_canvas_y = 600
@@ -25,7 +30,6 @@ menu_x = 250
 
 
 
-
 def on_closing():
     # объявляем переменную глобальной чтобы она не принимала новое значение в функции
     global app_running
@@ -34,6 +38,7 @@ def on_closing():
         app_running = False
         # уничтожение объекта при закрытии
         tk.destroy()
+
 
 
 # закрытие окна
@@ -65,8 +70,10 @@ def draw_table():
 
 draw_table()
 
+
 def button_show_enemy():
     pass
+
 
 def button_begin_again():
     pass
@@ -79,6 +86,30 @@ b0.place(x=size_canvas_x+20, y=30)
 # добавляем кнопки на панель и смещаем их чтобы они небыли на игровом поле
 b1 = Button(tk, text="Начать заново!", command=button_begin_again)
 b1.place(x=size_canvas_x+20, y=70)
+
+
+def add_to_all(event):
+    _type = 0 # левая кнопка мыши
+    if event.num == 3:
+        _type = 1 # правая кнопка мыши
+    # print(_type)
+    # координаты при нажатии на кнопки
+    mouse_x = canvas.winfo_pointerx() - canvas.winfo_rootx()
+    mouse_y = canvas.winfo_pointery() - canvas.winfo_rooty()
+    # print(mouse_x, mouse_y)
+    # получаем координаты ячейки на игровом поле
+    ip_x = mouse_x // step_x
+    ip_y = mouse_y // step_y
+    print(ip_x, ip_y, '_type', _type)
+
+
+
+
+
+
+canvas.bind_all('<Button-1>', add_to_all)  # левая кнопка мыши
+canvas.bind_all('<Button-3>', add_to_all)  # правая кнопка мыши
+
 
 # цикл для работы нашего приложения
 while app_running:
