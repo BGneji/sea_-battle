@@ -18,8 +18,8 @@ app_running = True
 # размеры окна
 size_canvas_x = 600
 size_canvas_y = 600
-s_x = s_y = 5  # размер игрового поля
-s_y = 5 # размер игрового поля
+s_x = s_y = 8  # размер игрового поля
+s_y = 8 # размер игрового поля
 # размер шагов между ячейками
 step_x = size_canvas_x // s_x  # шаг по горизонтали
 step_y = size_canvas_y // s_y  # шаг по вертикали
@@ -87,13 +87,17 @@ def button_show_enemy():
     for i in range(0, s_x):
         for j in range(0, s_y):
             if enemy_ships[j][i] > 0:
-                _id = canvas.create_rectangle(i * step_x, j * step_y, i * step_x + step_x, j * step_y + step_y,
-                                             fill="red")
+                _id = canvas.create_rectangle(i * step_x, j * step_y, i * step_x + step_x, j * step_y + step_y, fill="red")
                 list_ids.append(_id)
 
 
 def button_begin_again():
-    pass
+    global list_ids
+    for el in list_ids:
+        canvas.delete(el)
+    list_ids = []
+    generate_enemy_ships()
+
 
 
 # добавляем кнопки
@@ -198,7 +202,6 @@ def generate_enemy_ships():
         # print(sum_1_enemy)
         # print(ships_list)
         print(enemy_ships)
-
 
 generate_enemy_ships()
 
