@@ -45,6 +45,8 @@ list_ids = []
 
 # points список куда мы кликнули мышкой
 points = [[-1 for i in range(s_x)] for i in range(s_y)]
+# boom - список попаданий по кораблям противника
+boom = [[0 for i in range(s_x)] for i in range(s_y)]
 
 
 
@@ -95,7 +97,6 @@ def button_show_enemy():
                 color = 'red'
                 if points[j][i] != -1:
                     color = 'green'
-
                 _id = canvas.create_rectangle(i * step_x, j * step_y, i * step_x + step_x, j * step_y + step_y, fill=color)
                 list_ids.append(_id)
 
@@ -103,11 +104,13 @@ def button_show_enemy():
 def button_begin_again():
     global list_ids
     global points
+    global boom
     for el in list_ids:
         canvas.delete(el)
     list_ids = []
     generate_enemy_ships()
     points = [[-1 for i in range(s_x)] for i in range(s_y)]
+    boom = [[0 for i in range(s_x)] for i in range(s_y)]
 
 
 
@@ -118,6 +121,7 @@ b0.place(x=size_canvas_x + 20, y=30)
 # добавляем кнопки на панель и смещаем их чтобы они небыли на игровом поле
 b1 = Button(tk, text="Начать заново!", command=button_begin_again)
 b1.place(x=size_canvas_x + 20, y=70)
+
 
 # отрисовка кружочка и крестика на игровом поле
 def draw_point(x, y):
@@ -139,7 +143,31 @@ def draw_point(x, y):
         list_ids.append(id2)
 
 
+def check_winner(x, y):
+    win = False
+    if enemy_ships[y][x] > 0:
+        boom[y][x] = enemy_ships[y][x]
+    sum_enemy_ships = sum(sum(i) for i in zip(*enemy_ships))
+    sum_boom = sum(sum(i) for i in zip(*boom))
+    print(f'Сумм: {sum_enemy_ships}, {sum_boom}')
+    if sum_enemy_ships == sum_boom:
+        win = True
+    return win
+
+
+def check_winner2():
+    win = True
+    for i in range(0, s_x):
+        for j in range(0, s_y):
+            if enemy_ships[j][i] > 0:
+                if points[j][i] == -1:
+                    win = False
+    print(win)
+    return win
+
+
 def add_to_all(event):
+    global points
     _type = 0  # левая кнопка мыши
     if event.num == 3:
         _type = 1  # правая кнопка мыши
@@ -157,6 +185,10 @@ def add_to_all(event):
         if points[ip_y][ip_x] == -1:
             points[ip_y][ip_x] = _type
             draw_point(ip_x, ip_y)
+            # if check_winner(ip_x, ip_y):
+            if check_winner2():
+                print('Победа')
+                points = [[10 for i in range(s_x)] for i in range(s_y)]
         print(len(list_ids))
 
 
