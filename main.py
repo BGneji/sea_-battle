@@ -16,10 +16,10 @@ app_running = True
 # q = tesxr()
 
 # размеры окна
-size_canvas_x = 600
-size_canvas_y = 600
+size_canvas_x = 500
+size_canvas_y = 500
 s_x = s_y = 8  # размер игрового поля
-s_y = 8 # размер игрового поля
+s_y = 8  # размер игрового поля
 # размер шагов между ячейками
 step_x = size_canvas_x // s_x  # шаг по горизонтали
 step_y = size_canvas_y // s_y  # шаг по вертикали
@@ -27,7 +27,9 @@ step_y = size_canvas_y // s_y  # шаг по вертикали
 size_canvas_x = step_x * s_x
 size_canvas_y = step_y * s_y
 # добавим к игровому полю еще пространство, что бы не нарушалось целостность игрового поля
-menu_x = 250
+# и также меню равно 4 ячейкам поля
+menu_x = step_x * 4  # 250
+menu_y = 40
 # максимально количество кораблей для игрового поля
 ships = s_x // 2
 # ships = 8
@@ -47,7 +49,6 @@ list_ids = []
 points = [[-1 for i in range(s_x)] for i in range(s_y)]
 # boom - список попаданий по кораблям противника
 boom = [[0 for i in range(s_x)] for i in range(s_y)]
-
 
 
 def on_closing():
@@ -70,9 +71,12 @@ tk.resizable(0, 0)
 # окно игры поверх всех окон
 tk.wm_attributes("-topmost", 1)
 # окно игры с нашими параметрами которые мы задавали раньше
-canvas = Canvas(tk, width=size_canvas_x + menu_x, height=size_canvas_y, bd=0, highlightthickness=0)
+canvas = Canvas(tk, width=size_canvas_x + menu_x + size_canvas_x, height=size_canvas_y + menu_y, bd=0,
+                highlightthickness=0)
 # создаем окно в виде прямоугольника заливка(fill)
 canvas.create_rectangle(0, 0, size_canvas_x, size_canvas_y, fill='white')
+canvas.create_rectangle(size_canvas_x + menu_x, 0, size_canvas_x + menu_x + size_canvas_x, size_canvas_y,
+                        fill="lightyellow")
 # упаковка нашего окна
 canvas.pack()
 # обновление нашего объекта
@@ -80,14 +84,29 @@ tk.update()
 
 
 # функция, которая рисует поля игры
-def draw_table():
+def draw_table(offset_x=0):  # offset_x=0 - не обязательный элемент
     for i in range(0, s_x + 1):
-        canvas.create_line(step_x * i, 0, step_x * i, size_canvas_y)
+        canvas.create_line(offset_x + step_x * i, 0, offset_x + step_x * i, size_canvas_y)
     for i in range(0, s_x + 1):
-        canvas.create_line(0, step_y * i, size_canvas_x, step_y * i)
+        canvas.create_line(offset_x, step_y * i, offset_x + size_canvas_x, step_y * i)
 
 
 draw_table()
+# вызываем второй раз функцию для создания игрового поля
+draw_table(size_canvas_x + menu_x)
+
+# добавляем информацию в нижнее поля где прописано игрок1 и игрок2
+t0 = Label(tk, text="Игрок №1", font=("Helvetica", 16))
+# центровка надписи игрок1
+t0.place(x=size_canvas_x // 2 - t0.winfo_reqwidth() // 2, y=size_canvas_y + 3)
+t1 = Label(tk, text="Игрок №2", font=("Helvetica", 16))
+# центровка надписи игрок2
+t1.place(x=size_canvas_x + menu_x + size_canvas_x // 2 - t1.winfo_reqwidth() // 2, y=size_canvas_y + 3)
+
+
+# пометить какой игрок ходит
+t0.configure(bg='red')
+t0.configure(bg='#f0f0f0')
 
 
 def button_show_enemy():
@@ -97,7 +116,8 @@ def button_show_enemy():
                 color = 'red'
                 if points[j][i] != -1:
                     color = 'green'
-                _id = canvas.create_rectangle(i * step_x, j * step_y, i * step_x + step_x, j * step_y + step_y, fill=color)
+                _id = canvas.create_rectangle(i * step_x, j * step_y, i * step_x + step_x, j * step_y + step_y,
+                                              fill=color)
                 list_ids.append(_id)
 
 
@@ -111,7 +131,6 @@ def button_begin_again():
     generate_enemy_ships()
     points = [[-1 for i in range(s_x)] for i in range(s_y)]
     boom = [[0 for i in range(s_x)] for i in range(s_y)]
-
 
 
 # добавляем кнопки
@@ -270,6 +289,7 @@ def generate_enemy_ships():
         # print(sum_1_enemy)
         # print(ships_list)
         # print(enemy_ships)
+
 
 generate_enemy_ships()
 
