@@ -31,8 +31,8 @@ size_canvas_y = step_y * s_y
 menu_x = step_x * 4  # 250
 menu_y = 40
 # максимально количество кораблей для игрового поля
-ships = s_x // 2
-# ships = 8
+# ships = s_x // 2
+ships = 5
 # длина первого типа корабля
 ships_len1 = s_x // 5
 # длина второго типа корабля
@@ -53,6 +53,8 @@ points2 = [[-1 for i in range(s_x)] for i in range(s_y)]
 # boom - список попаданий по кораблям противника
 boom = [[0 for i in range(s_x)] for i in range(s_y)]
 
+# ships_list - список кораблей игрока1 и игрока2
+ships_list = []
 
 def on_closing():
     # объявляем переменную глобальной чтобы она не принимала новое значение в функции
@@ -144,6 +146,8 @@ def button_begin_again():
     for el in list_ids:
         canvas.delete(el)
     list_ids = []
+    generate_ships_list()
+    print(ships_list)
     enemy_ships1 = generate_enemy_ships()
     enemy_ships2 = generate_enemy_ships()
     points1 = [[-1 for i in range(s_x)] for i in range(s_y)]
@@ -223,7 +227,7 @@ def add_to_all(event):
     # получаем координаты ячейки на игровом поле
     ip_x = mouse_x // step_x
     ip_y = mouse_y // step_y
-    print(ip_x, ip_y, '_type', _type)
+    # print(ip_x, ip_y, '_type', _type)
     # ip_x ip_y - это игровое поле проверка, что бы мы не выходили за рамки игривого поля
     if ip_x < s_x and ip_y < s_y:
         if points1[ip_y][ip_x] == -1:
@@ -233,21 +237,31 @@ def add_to_all(event):
             if check_winner2():
                 print('Победа')
                 points1 = [[10 for i in range(s_x)] for i in range(s_y)]
-        print(len(list_ids))
+        # print(len(list_ids))
 
 
 canvas.bind_all('<Button-1>', add_to_all)  # левая кнопка мыши
 canvas.bind_all('<Button-3>', add_to_all)  # правая кнопка мыши
 
 
-def generate_enemy_ships():
-    enemy_ships = []
+def generate_ships_list():
+    global ships_list
     ships_list = []
-    # генерация короблей по размерам
+    # генерация кораблей по размерам
     for i in range(0, ships):
         ships_list.append(random.choice([ships_len1, ships_len2, ships_len3]))
+
+
+
+
+
+
+def generate_enemy_ships():
+    global ships_list
+    enemy_ships = []
+
     # print(ships_list)
-    # подсчет сумарной длинны коробля
+    # подсчет суммарной длинны коробля
     sum_1_all_ships = sum(ships_list)
     sum_1_enemy = 0
 
@@ -314,8 +328,11 @@ def generate_enemy_ships():
         # print(sum_1_enemy)
         # print(ships_list)
         # print(enemy_ships)
-        return enemy_ships
+    return enemy_ships
 
+
+generate_ships_list()
+print(ships_list)
 enemy_ships1 = generate_enemy_ships()
 enemy_ships2 = generate_enemy_ships()
 # print('******************')
