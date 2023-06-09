@@ -28,7 +28,8 @@ size_canvas_x = step_x * s_x
 size_canvas_y = step_y * s_y
 # добавим к игровому полю еще пространство, что бы не нарушалось целостность игрового поля
 # и также меню равно 4 ячейкам поля
-menu_x = step_x * 4  # 250
+delta_menu_x = 4
+menu_x = step_x * delta_menu_x  # 250
 menu_y = 40
 # максимально количество кораблей для игрового поля
 # ships = s_x // 2
@@ -147,7 +148,7 @@ def button_begin_again():
         canvas.delete(el)
     list_ids = []
     generate_ships_list()
-    print(ships_list)
+    # print(ships_list)
     enemy_ships1 = generate_enemy_ships()
     enemy_ships2 = generate_enemy_ships()
     points1 = [[-1 for i in range(s_x)] for i in range(s_y)]
@@ -191,13 +192,32 @@ def draw_point(x, y):
         list_ids.append(id2)
 
 
+def draw_point2(x, y, offset_x=size_canvas_x + menu_x):
+    # print(enemy_ships1[y][x])
+    if enemy_ships2[y][x] == 0:
+        color = "red"
+        id1 = canvas.create_oval(offset_x + x * step_x, y * step_y, offset_x + x * step_x + step_x, y * step_y + step_y, fill=color)
+        id2 = canvas.create_oval(offset_x + x * step_x + step_x // 3, y * step_y + step_y // 3, offset_x + x * step_x + step_x - step_x // 3,
+                                 y * step_y + step_y - step_y // 3, fill="white")
+        list_ids.append(id1)
+        list_ids.append(id2)
+    if enemy_ships2[y][x] > 0:
+        color = "blue"
+        id1 = canvas.create_rectangle(offset_x + x * step_x, y * step_y + step_y // 2 - step_y // 10, offset_x + x * step_x + step_x,
+                                      y * step_y + step_y // 2 + step_y // 10, fill=color)
+        id2 = canvas.create_rectangle(offset_x + x * step_x + step_x // 2 - step_x // 10, y * step_y,
+                                      offset_x + x * step_x + step_x // 2 + step_x // 10, y * step_y + step_y, fill=color)
+        list_ids.append(id1)
+        list_ids.append(id2)
+
+
 def check_winner(x, y):
     win = False
     if enemy_ships1[y][x] > 0:
         boom[y][x] = enemy_ships1[y][x]
     sum_enemy_ships1 = sum(sum(i) for i in zip(*enemy_ships1))
     sum_boom = sum(sum(i) for i in zip(*boom))
-    print(f'Сумм: {sum_enemy_ships1}, {sum_boom}')
+    # print(f'Сумм: {sum_enemy_ships1}, {sum_boom}')
     if sum_enemy_ships1 == sum_boom:
         win = True
     return win
@@ -215,7 +235,7 @@ def check_winner2():
 
 
 def add_to_all(event):
-    global points1
+    global points1, points2
     _type = 0  # левая кнопка мыши
     if event.num == 3:
         _type = 1  # правая кнопка мыши
@@ -227,7 +247,7 @@ def add_to_all(event):
     # получаем координаты ячейки на игровом поле
     ip_x = mouse_x // step_x
     ip_y = mouse_y // step_y
-    # print(ip_x, ip_y, '_type', _type)
+    print(ip_x, ip_y, '_type', _type)
     # ip_x ip_y - это игровое поле проверка, что бы мы не выходили за рамки игривого поля
     if ip_x < s_x and ip_y < s_y:
         if points1[ip_y][ip_x] == -1:
@@ -238,6 +258,16 @@ def add_to_all(event):
                 print('Победа')
                 points1 = [[10 for i in range(s_x)] for i in range(s_y)]
         # print(len(list_ids))
+
+    if ip_x >= s_x + delta_menu_x and ip_x <= s_x + s_x + delta_menu_x and ip_y < s_y:
+        print('ok')
+        if points2[ip_y][ip_x - s_x - delta_menu_x] == -1:
+            points2[ip_y][ip_x - s_x - delta_menu_x] = _type
+            draw_point2(ip_x - s_x - delta_menu_x, ip_y)
+            # if check_winner(ip_x, ip_y):
+            if check_winner2():
+                print('Победа')
+                points1 = [[10 for i in range(s_x)] for i in range(s_y)]
 
 
 canvas.bind_all('<Button-1>', add_to_all)  # левая кнопка мыши
@@ -250,10 +280,6 @@ def generate_ships_list():
     # генерация кораблей по размерам
     for i in range(0, ships):
         ships_list.append(random.choice([ships_len1, ships_len2, ships_len3]))
-
-
-
-
 
 
 def generate_enemy_ships():
@@ -332,7 +358,7 @@ def generate_enemy_ships():
 
 
 generate_ships_list()
-print(ships_list)
+# print(ships_list)
 enemy_ships1 = generate_enemy_ships()
 enemy_ships2 = generate_enemy_ships()
 # print('******************')
