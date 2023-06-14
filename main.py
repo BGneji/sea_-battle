@@ -230,8 +230,20 @@ def check_winner2():
             if enemy_ships1[j][i] > 0:
                 if points1[j][i] == -1:
                     win = False
-    print(win)
+    # print(win)
     return win
+
+def check_winner2_igrok_2():
+    win = True
+    for i in range(0, s_x):
+        for j in range(0, s_y):
+            if enemy_ships2[j][i] > 0:
+                if points2[j][i] == -1:
+                    win = False
+    # print(win)
+    return win
+
+
 
 
 def add_to_all(event):
@@ -249,25 +261,30 @@ def add_to_all(event):
     ip_y = mouse_y // step_y
     print(ip_x, ip_y, '_type', _type)
     # ip_x ip_y - это игровое поле проверка, что бы мы не выходили за рамки игривого поля
+
+    # первое игровое поле
     if ip_x < s_x and ip_y < s_y:
         if points1[ip_y][ip_x] == -1:
             points1[ip_y][ip_x] = _type
             draw_point(ip_x, ip_y)
             # if check_winner(ip_x, ip_y):
             if check_winner2():
-                print('Победа')
+                print('Победа Игрока №2 (Все корабли противника Игрока №1 подбиты)')
                 points1 = [[10 for i in range(s_x)] for i in range(s_y)]
+                points2 = [[10 for i in range(s_x)] for i in range(s_y)]
         # print(len(list_ids))
 
+    # второе игровое поле
     if ip_x >= s_x + delta_menu_x and ip_x <= s_x + s_x + delta_menu_x and ip_y < s_y:
         print('ok')
         if points2[ip_y][ip_x - s_x - delta_menu_x] == -1:
             points2[ip_y][ip_x - s_x - delta_menu_x] = _type
             draw_point2(ip_x - s_x - delta_menu_x, ip_y)
             # if check_winner(ip_x, ip_y):
-            if check_winner2():
-                print('Победа')
+            if check_winner2_igrok_2():
+                print('Победа Игрока №1 (Все корабли противника Игрока №2 подбиты)')
                 points1 = [[10 for i in range(s_x)] for i in range(s_y)]
+                points2 = [[10 for i in range(s_x)] for i in range(s_y)]
 
 
 canvas.bind_all('<Button-1>', add_to_all)  # левая кнопка мыши
