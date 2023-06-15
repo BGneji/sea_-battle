@@ -269,9 +269,23 @@ def add_to_all(event):
             draw_point(ip_x, ip_y)
             # if check_winner(ip_x, ip_y):
             if check_winner2():
-                print('Победа Игрока №2 (Все корабли противника Игрока №1 подбиты)')
+                winner = 'Победа Игрока №2'
+                winner_add = 'Все корабли противника Игрока №1 подбиты'
                 points1 = [[10 for i in range(s_x)] for i in range(s_y)]
                 points2 = [[10 for i in range(s_x)] for i in range(s_y)]
+                id1 = canvas.create_rectangle(step_x * 3, step_y * 3,
+                                              size_canvas_x + menu_x + size_canvas_x - step_x * 3,
+                                              size_canvas_y - step_y, fill="blue")
+                list_ids.append(id1)
+                id2 = canvas.create_rectangle(step_x * 3 + step_x // 2, step_y * 3 + step_y // 2,
+                                              size_canvas_x + menu_x + size_canvas_x - step_x * 3 - step_x // 2,
+                                              size_canvas_y - step_y - step_y // 2, fill="yellow")
+                list_ids.append(id2)
+                id3 = canvas.create_text(step_x * 10, step_y * 5, text=winner, font=("Arial", 50), justify=CENTER)
+                id4 = canvas.create_text(step_x * 10, step_y * 6, text=winner_add, font=("Arial", 25), justify=CENTER)
+                list_ids.append(id3)
+                list_ids.append(id4)
+
         # print(len(list_ids))
 
     # второе игровое поле
@@ -282,9 +296,23 @@ def add_to_all(event):
             draw_point2(ip_x - s_x - delta_menu_x, ip_y)
             # if check_winner(ip_x, ip_y):
             if check_winner2_igrok_2():
-                print('Победа Игрока №1 (Все корабли противника Игрока №2 подбиты)')
+                winner = 'Победа Игрока №1'
+                winner_add = 'Все корабли противника Игрока №2 подбиты'
                 points1 = [[10 for i in range(s_x)] for i in range(s_y)]
                 points2 = [[10 for i in range(s_x)] for i in range(s_y)]
+                id1 = canvas.create_rectangle(step_x * 3, step_y * 3,
+                                              size_canvas_x + menu_x + size_canvas_x - step_x * 3,
+                                              size_canvas_y - step_y, fill="blue")
+                list_ids.append(id1)
+                id2 = canvas.create_rectangle(step_x * 3 + step_x // 2, step_y * 3 + step_y // 2,
+                                              size_canvas_x + menu_x + size_canvas_x - step_x * 3 - step_x // 2,
+                                              size_canvas_y - step_y - step_y // 2, fill="yellow")
+                list_ids.append(id2)
+                id3 = canvas.create_text(step_x * 10, step_y * 5, text=winner, font=("Arial", 50), justify=CENTER)
+                id4 = canvas.create_text(step_x * 10, step_y * 6, text=winner_add, font=("Arial", 25), justify=CENTER)
+                list_ids.append(id3)
+                list_ids.append(id4)
+
 
 
 canvas.bind_all('<Button-1>', add_to_all)  # левая кнопка мыши
