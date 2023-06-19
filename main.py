@@ -57,6 +57,9 @@ boom = [[0 for i in range(s_x)] for i in range(s_y)]
 # ships_list - список кораблей игрока1 и игрока2
 ships_list = []
 
+# hod_igrovomu_polu_1 если итина то ходит игрок номер 2 иначе ходит игрок 1
+hod_igrovomu_polu_1 = False
+
 def on_closing():
     # объявляем переменную глобальной чтобы она не принимала новое значение в функции
     global app_running
@@ -114,6 +117,21 @@ t0.configure(bg='red')
 t0.configure(bg='#f0f0f0')
 
 
+t3 = Label(tk, text="@@@@@@@@", font=("Helvetica", 16))
+# центровка надписи игрок1
+t3.place(x=size_canvas_x+step_x/2, y = 3 * step_y)
+
+
+def mark_igrok(igrok_mark_1):
+    if igrok_mark_1:
+        t0.configure(bg='red')
+        t1.configure(bg='#f0f0f0')
+        t3.configure(text='Ход игрока №2')
+    else:
+        t1.configure(bg='red')
+        t0.configure(bg='#f0f0f0')
+        t3.configure(text='Ход игрока №1')
+
 def button_show_enemy1():
     for i in range(0, s_x):
         for j in range(0, s_y):
@@ -136,6 +154,7 @@ def button_show_enemy2():
                 _id = canvas.create_rectangle(size_canvas_x + menu_x + i * step_x, j * step_y, size_canvas_x + menu_x + i * step_x + step_x, j * step_y + step_y,
                                               fill=color)
                 list_ids.append(_id)
+mark_igrok(hod_igrovomu_polu_1)
 
 
 def button_begin_again():
@@ -247,7 +266,7 @@ def check_winner2_igrok_2():
 
 
 def add_to_all(event):
-    global points1, points2
+    global points1, points2, hod_igrovomu_polu_1
     _type = 0  # левая кнопка мыши
     if event.num == 3:
         _type = 1  # правая кнопка мыши
@@ -259,16 +278,18 @@ def add_to_all(event):
     # получаем координаты ячейки на игровом поле
     ip_x = mouse_x // step_x
     ip_y = mouse_y // step_y
-    print(ip_x, ip_y, '_type', _type)
+    # print(ip_x, ip_y, '_type', _type)
     # ip_x ip_y - это игровое поле проверка, что бы мы не выходили за рамки игривого поля
 
     # первое игровое поле
-    if ip_x < s_x and ip_y < s_y:
+    if ip_x < s_x and ip_y < s_y and hod_igrovomu_polu_1:
         if points1[ip_y][ip_x] == -1:
             points1[ip_y][ip_x] = _type
+            hod_igrovomu_polu_1 = False
             draw_point(ip_x, ip_y)
             # if check_winner(ip_x, ip_y):
             if check_winner2():
+                hod_igrovomu_polu_1 = True
                 winner = 'Победа Игрока №2'
                 winner_add = 'Все корабли противника Игрока №1 подбиты'
                 points1 = [[10 for i in range(s_x)] for i in range(s_y)]
@@ -289,13 +310,15 @@ def add_to_all(event):
         # print(len(list_ids))
 
     # второе игровое поле
-    if ip_x >= s_x + delta_menu_x and ip_x <= s_x + s_x + delta_menu_x and ip_y < s_y:
+    if ip_x >= s_x + delta_menu_x and ip_x <= s_x + s_x + delta_menu_x and ip_y < s_y and not hod_igrovomu_polu_1:
         print('ok')
         if points2[ip_y][ip_x - s_x - delta_menu_x] == -1:
             points2[ip_y][ip_x - s_x - delta_menu_x] = _type
+            hod_igrovomu_polu_1 = True
             draw_point2(ip_x - s_x - delta_menu_x, ip_y)
             # if check_winner(ip_x, ip_y):
             if check_winner2_igrok_2():
+                hod_igrovomu_polu_1 = False
                 winner = 'Победа Игрока №1'
                 winner_add = 'Все корабли противника Игрока №2 подбиты'
                 points1 = [[10 for i in range(s_x)] for i in range(s_y)]
@@ -312,6 +335,7 @@ def add_to_all(event):
                 id4 = canvas.create_text(step_x * 10, step_y * 6, text=winner_add, font=("Arial", 25), justify=CENTER)
                 list_ids.append(id3)
                 list_ids.append(id4)
+    mark_igrok(hod_igrovomu_polu_1)
 
 
 
