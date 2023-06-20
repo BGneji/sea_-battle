@@ -60,6 +60,15 @@ ships_list = []
 # hod_igrovomu_polu_1 если итина то ходит игрок номер 2 иначе ходит игрок 1
 hod_igrovomu_polu_1 = False
 
+# computer_vs_human если истина то играем против компьютера
+computer_vs_human = True
+if computer_vs_human:
+    add_to_label = '(Компьютер)'
+    hod_igrovomu_polu_1 = False
+else:
+    add_to_label = ''
+    hod_igrovomu_polu_1 = False
+
 def on_closing():
     # объявляем переменную глобальной чтобы она не принимала новое значение в функции
     global app_running
@@ -108,7 +117,7 @@ draw_table(size_canvas_x + menu_x)
 t0 = Label(tk, text="Игрок №1", font=("Helvetica", 16))
 # центровка надписи игрок1
 t0.place(x=size_canvas_x // 2 - t0.winfo_reqwidth() // 2, y=size_canvas_y + 3)
-t1 = Label(tk, text="Игрок №2", font=("Helvetica", 16))
+t1 = Label(tk, text="Игрок №2"+ add_to_label, font=("Helvetica", 16))
 # центровка надписи игрок2
 t1.place(x=size_canvas_x + menu_x + size_canvas_x // 2 - t1.winfo_reqwidth() // 2, y=size_canvas_y + 3)
 
@@ -119,18 +128,22 @@ t0.configure(bg='#f0f0f0')
 
 t3 = Label(tk, text="@@@@@@@@", font=("Helvetica", 16))
 # центровка надписи игрок1
-t3.place(x=size_canvas_x+step_x/2, y = 3 * step_y)
+t3.place(x=(size_canvas_x)+menu_x//2 - t3.winfo_reqwidth()//2, y = size_canvas_y)
 
 
 def mark_igrok(igrok_mark_1):
     if igrok_mark_1:
         t0.configure(bg='red')
         t1.configure(bg='#f0f0f0')
-        t3.configure(text='Ход игрока №2')
+        t3.configure(text='Ход игрока №2' + add_to_label)
+        t3.place(x=(size_canvas_x) + menu_x // 2 - t3.winfo_reqwidth() // 2, y=size_canvas_y)
+
     else:
         t1.configure(bg='red')
         t0.configure(bg='#f0f0f0')
         t3.configure(text='Ход игрока №1')
+        t3.place(x=(size_canvas_x) + menu_x // 2 - t3.winfo_reqwidth() // 2, y=size_canvas_y)
+
 
 def button_show_enemy1():
     for i in range(0, s_x):
@@ -263,6 +276,36 @@ def check_winner2_igrok_2():
     return win
 
 
+def hod_computer():
+    global points1, points2, hod_igrovomu_polu_1
+    tk.update()
+    time.sleep(1)
+    hod_igrovomu_polu_1 = False
+    ip_x = random.randint(0, s_x-1)
+    ip_y = random.randint(0, s_y-1)
+    while not points1[ip_y][ip_x] == -1:
+        ip_x = random.randint(0, s_x-1)
+        ip_y = random.randint(0, s_y-1)
+    points1[ip_y][ip_x] = 7
+    draw_point(ip_x, ip_y)
+    if check_winner2():
+        winner = 'Победа Игрока №2' + add_to_label
+        winner_add = 'Все корабли противника Игрока №1 подбиты'
+        print(winner, winner_add)
+        points1 = [[10 for i in range(s_x)] for i in range(s_y)]
+        points2 = [[10 for i in range(s_x)] for i in range(s_y)]
+        id1 = canvas.create_rectangle(step_x * 3, step_y * 3,
+                                      size_canvas_x + menu_x + size_canvas_x - step_x * 3,
+                                      size_canvas_y - step_y, fill="blue")
+        list_ids.append(id1)
+        id2 = canvas.create_rectangle(step_x * 3 + step_x // 2, step_y * 3 + step_y // 2,
+                                      size_canvas_x + menu_x + size_canvas_x - step_x * 3 - step_x // 2,
+                                      size_canvas_y - step_y - step_y // 2, fill="yellow")
+        list_ids.append(id2)
+        id3 = canvas.create_text(step_x * 10, step_y * 5, text=winner, font=("Arial", 50), justify=CENTER)
+        id4 = canvas.create_text(step_x * 10, step_y * 6, text=winner_add, font=("Arial", 25), justify=CENTER)
+        list_ids.append(id3)
+        list_ids.append(id4)
 
 
 def add_to_all(event):
@@ -309,6 +352,7 @@ def add_to_all(event):
 
         # print(len(list_ids))
 
+
     # второе игровое поле
     if ip_x >= s_x + delta_menu_x and ip_x <= s_x + s_x + delta_menu_x and ip_y < s_y and not hod_igrovomu_polu_1:
         print('ok')
@@ -335,8 +379,10 @@ def add_to_all(event):
                 id4 = canvas.create_text(step_x * 10, step_y * 6, text=winner_add, font=("Arial", 25), justify=CENTER)
                 list_ids.append(id3)
                 list_ids.append(id4)
+            elif computer_vs_human:
+                mark_igrok(hod_igrovomu_polu_1)
+                hod_computer()
     mark_igrok(hod_igrovomu_polu_1)
-
 
 
 canvas.bind_all('<Button-1>', add_to_all)  # левая кнопка мыши
