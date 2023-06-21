@@ -64,10 +64,13 @@ hod_igrovomu_polu_1 = False
 computer_vs_human = True
 if computer_vs_human:
     add_to_label = '(Компьютер)'
+    add_to_label2 = '(Прицеливаемся)'
     hod_igrovomu_polu_1 = False
 else:
     add_to_label = ''
+    add_to_label2 = ''
     hod_igrovomu_polu_1 = False
+
 
 def on_closing():
     # объявляем переменную глобальной чтобы она не принимала новое значение в функции
@@ -117,7 +120,7 @@ draw_table(size_canvas_x + menu_x)
 t0 = Label(tk, text="Игрок №1", font=("Helvetica", 16))
 # центровка надписи игрок1
 t0.place(x=size_canvas_x // 2 - t0.winfo_reqwidth() // 2, y=size_canvas_y + 3)
-t1 = Label(tk, text="Игрок №2"+ add_to_label, font=("Helvetica", 16))
+t1 = Label(tk, text="Игрок №2" + add_to_label, font=("Helvetica", 16))
 # центровка надписи игрок2
 t1.place(x=size_canvas_x + menu_x + size_canvas_x // 2 - t1.winfo_reqwidth() // 2, y=size_canvas_y + 3)
 
@@ -125,24 +128,57 @@ t1.place(x=size_canvas_x + menu_x + size_canvas_x // 2 - t1.winfo_reqwidth() // 
 t0.configure(bg='red')
 t0.configure(bg='#f0f0f0')
 
-
 t3 = Label(tk, text="@@@@@@@@", font=("Helvetica", 16))
 # центровка надписи игрок1
-t3.place(x=(size_canvas_x)+menu_x//2 - t3.winfo_reqwidth()//2, y = size_canvas_y)
+t3.place(x=(size_canvas_x) + menu_x // 2 - t3.winfo_reqwidth() // 2, y=size_canvas_y)
+
+
+def change_rb():
+    global computer_vs_human, add_to_label, add_to_label2
+    if rb_var.get():
+        computer_vs_human = True
+        add_to_label = '(Компьютер)'
+        add_to_label2 = '(Прицеливается)'
+
+    else:
+        computer_vs_human = False
+        add_to_label = ''
+        add_to_label2 = ''
+
+
+# Булевая переменная встроена
+rb_var = BooleanVar()  # при переклчение происходит вызов функции compound=change_rb
+rb1 = Radiobutton(tk, text="Человек vs Компьютер", variable=rb_var, value=1, command=change_rb)
+rb2 = Radiobutton(tk, text="Человек vs Человек", variable=rb_var, value=0, command=change_rb)
+rb1.place(x=size_canvas_x + 20, y=140)
+rb2.place(x=size_canvas_x + 20, y=160)
+# по уполномоченную будет выброна человек против компьютера
+if computer_vs_human:
+    rb1.select()
 
 
 def mark_igrok(igrok_mark_1):
     if igrok_mark_1:
-        t0.configure(bg='red')
-        t1.configure(bg='#f0f0f0')
+        t0.configure(bg="red")
+        t0.configure(text="Игрок №1" + add_to_label2)
+        t0.place(x=size_canvas_x // 2 - t0.winfo_reqwidth() // 2, y=size_canvas_y + 3)
+        t1.configure(text="Игрок №2" + add_to_label)
+        t1.place(x=size_canvas_x + menu_x + size_canvas_x // 2 - t1.winfo_reqwidth() // 2, y=size_canvas_y + 3)
+        t1.configure(bg="#f0f0f0")
         t3.configure(text='Ход игрока №2' + add_to_label)
         t3.place(x=(size_canvas_x) + menu_x // 2 - t3.winfo_reqwidth() // 2, y=size_canvas_y)
-
     else:
-        t1.configure(bg='red')
-        t0.configure(bg='#f0f0f0')
-        t3.configure(text='Ход игрока №1')
-        t3.place(x=(size_canvas_x) + menu_x // 2 - t3.winfo_reqwidth() // 2, y=size_canvas_y)
+        t1.configure(bg="red")
+        t0.configure(bg="#f0f0f0")
+        t0.configure(text="Игрок №1")
+        t0.place(x=size_canvas_x // 2 - t0.winfo_reqwidth() // 2, y=size_canvas_y + 3)
+        t1.configure(text="Игрок №2" + add_to_label)
+        t1.place(x=size_canvas_x + menu_x + size_canvas_x // 2 - t1.winfo_reqwidth() // 2, y=size_canvas_y + 3)
+        t3.configure(text="Ход Игрока №1")
+        t3.place(x=size_canvas_x + menu_x // 2 - t3.winfo_reqwidth() // 2, y=size_canvas_y)
+
+
+mark_igrok(hod_igrovomu_polu_1)
 
 
 def button_show_enemy1():
@@ -164,9 +200,12 @@ def button_show_enemy2():
                 color = 'red'
                 if points2[j][i] != -1:
                     color = 'green'
-                _id = canvas.create_rectangle(size_canvas_x + menu_x + i * step_x, j * step_y, size_canvas_x + menu_x + i * step_x + step_x, j * step_y + step_y,
+                _id = canvas.create_rectangle(size_canvas_x + menu_x + i * step_x, j * step_y,
+                                              size_canvas_x + menu_x + i * step_x + step_x, j * step_y + step_y,
                                               fill=color)
                 list_ids.append(_id)
+
+
 mark_igrok(hod_igrovomu_polu_1)
 
 
@@ -193,11 +232,9 @@ b0 = Button(tk, text='Показать корабли Игрока №1', comman
 # добавляем кнопки на панель и смещаем их чтобы они небыли на игровом поле
 b0.place(x=size_canvas_x + 20, y=30)
 
-
 b1 = Button(tk, text='Показать корабли Игрока №2', command=button_show_enemy2)
 # добавляем кнопки на панель и смещаем их чтобы они небыли на игровом поле
 b1.place(x=size_canvas_x + 20, y=70)
-
 
 # добавляем кнопки на панель и смещаем их чтобы они небыли на игровом поле
 b2 = Button(tk, text="Начать заново!", command=button_begin_again)
@@ -228,17 +265,21 @@ def draw_point2(x, y, offset_x=size_canvas_x + menu_x):
     # print(enemy_ships1[y][x])
     if enemy_ships2[y][x] == 0:
         color = "red"
-        id1 = canvas.create_oval(offset_x + x * step_x, y * step_y, offset_x + x * step_x + step_x, y * step_y + step_y, fill=color)
-        id2 = canvas.create_oval(offset_x + x * step_x + step_x // 3, y * step_y + step_y // 3, offset_x + x * step_x + step_x - step_x // 3,
+        id1 = canvas.create_oval(offset_x + x * step_x, y * step_y, offset_x + x * step_x + step_x, y * step_y + step_y,
+                                 fill=color)
+        id2 = canvas.create_oval(offset_x + x * step_x + step_x // 3, y * step_y + step_y // 3,
+                                 offset_x + x * step_x + step_x - step_x // 3,
                                  y * step_y + step_y - step_y // 3, fill="white")
         list_ids.append(id1)
         list_ids.append(id2)
     if enemy_ships2[y][x] > 0:
         color = "blue"
-        id1 = canvas.create_rectangle(offset_x + x * step_x, y * step_y + step_y // 2 - step_y // 10, offset_x + x * step_x + step_x,
+        id1 = canvas.create_rectangle(offset_x + x * step_x, y * step_y + step_y // 2 - step_y // 10,
+                                      offset_x + x * step_x + step_x,
                                       y * step_y + step_y // 2 + step_y // 10, fill=color)
         id2 = canvas.create_rectangle(offset_x + x * step_x + step_x // 2 - step_x // 10, y * step_y,
-                                      offset_x + x * step_x + step_x // 2 + step_x // 10, y * step_y + step_y, fill=color)
+                                      offset_x + x * step_x + step_x // 2 + step_x // 10, y * step_y + step_y,
+                                      fill=color)
         list_ids.append(id1)
         list_ids.append(id2)
 
@@ -265,6 +306,7 @@ def check_winner2():
     # print(win)
     return win
 
+
 def check_winner2_igrok_2():
     win = True
     for i in range(0, s_x):
@@ -281,11 +323,11 @@ def hod_computer():
     tk.update()
     time.sleep(1)
     hod_igrovomu_polu_1 = False
-    ip_x = random.randint(0, s_x-1)
-    ip_y = random.randint(0, s_y-1)
+    ip_x = random.randint(0, s_x - 1)
+    ip_y = random.randint(0, s_y - 1)
     while not points1[ip_y][ip_x] == -1:
-        ip_x = random.randint(0, s_x-1)
-        ip_y = random.randint(0, s_y-1)
+        ip_x = random.randint(0, s_x - 1)
+        ip_y = random.randint(0, s_y - 1)
     points1[ip_y][ip_x] = 7
     draw_point(ip_x, ip_y)
     if check_winner2():
@@ -352,7 +394,6 @@ def add_to_all(event):
 
         # print(len(list_ids))
 
-
     # второе игровое поле
     if ip_x >= s_x + delta_menu_x and ip_x <= s_x + s_x + delta_menu_x and ip_y < s_y and not hod_igrovomu_polu_1:
         print('ok')
@@ -409,7 +450,7 @@ def generate_enemy_ships():
     while sum_1_enemy != sum_1_all_ships:
         # обнуляем массив кораблей врага
         enemy_ships = [[0 for i in range(s_x + 1)] for i in
-                        range(s_y + 1)]  # +1 для доп. линии справа и снизу, для успешных проверок генерации противника
+                       range(s_y + 1)]  # +1 для доп. линии справа и снизу, для успешных проверок генерации противника
 
         for i in range(0, ships):
             len = ships_list[i]
