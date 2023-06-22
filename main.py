@@ -18,22 +18,26 @@ app_running = True
 # размеры окна
 size_canvas_x = 500
 size_canvas_y = 500
-s_x = s_y = 8  # размер игрового поля
-s_y = 8  # размер игрового поля
+s_x = s_y = 17  # размер игрового поля
+s_y = 18  # размер игрового поля
 # размер шагов между ячейками
 step_x = size_canvas_x // s_x  # шаг по горизонтали
 step_y = size_canvas_y // s_y  # шаг по вертикали
 # переопределим ширину и высоту окна игры чтобы не было зазоров по бокам
 size_canvas_x = step_x * s_x
 size_canvas_y = step_y * s_y
+txt_len_middle = '* Человек vs Компьютер'
+size_font_x = 10
+len_txt_x = len(txt_len_middle)*size_font_x
+print(len_txt_x)
 # добавим к игровому полю еще пространство, что бы не нарушалось целостность игрового поля
 # и также меню равно 4 ячейкам поля
-delta_menu_x = 4
+delta_menu_x = len_txt_x // step_x + 1
 menu_x = step_x * delta_menu_x  # 250
 menu_y = 40
 # максимально количество кораблей для игрового поля
 # ships = s_x // 2
-ships = 5
+ships = 1
 # длина первого типа корабля
 ships_len1 = s_x // 5
 # длина второго типа корабля
@@ -150,8 +154,8 @@ def change_rb():
 rb_var = BooleanVar()  # при переклчение происходит вызов функции compound=change_rb
 rb1 = Radiobutton(tk, text="Человек vs Компьютер", variable=rb_var, value=1, command=change_rb)
 rb2 = Radiobutton(tk, text="Человек vs Человек", variable=rb_var, value=0, command=change_rb)
-rb1.place(x=size_canvas_x + 20, y=140)
-rb2.place(x=size_canvas_x + 20, y=160)
+rb1.place(x=size_canvas_x + menu_x//2 - rb1.winfo_reqwidth() // 2, y=140)
+rb2.place(x=size_canvas_x + menu_x//2 - rb2.winfo_reqwidth() // 2, y=160)
 # по уполномоченную будет выброна человек против компьютера
 if computer_vs_human:
     rb1.select()
@@ -228,17 +232,17 @@ def button_begin_again():
 
 
 # добавляем кнопки
-b0 = Button(tk, text='Показать корабли Игрока №1', command=button_show_enemy1)
+b0 = Button(tk, text='Показать корабли \n Игрока №1', command=button_show_enemy1)
 # добавляем кнопки на панель и смещаем их чтобы они небыли на игровом поле
-b0.place(x=size_canvas_x + 20, y=30)
+b0.place(x=size_canvas_x + menu_x//2 - b0.winfo_reqwidth() // 2, y=10)
 
-b1 = Button(tk, text='Показать корабли Игрока №2', command=button_show_enemy2)
+b1 = Button(tk, text='Показать корабли \n Игрока №2', command=button_show_enemy2)
 # добавляем кнопки на панель и смещаем их чтобы они небыли на игровом поле
-b1.place(x=size_canvas_x + 20, y=70)
+b1.place(x=size_canvas_x + menu_x//2 - b1.winfo_reqwidth() // 2, y=60)
 
 # добавляем кнопки на панель и смещаем их чтобы они небыли на игровом поле
 b2 = Button(tk, text="Начать заново!", command=button_begin_again)
-b2.place(x=size_canvas_x + 20, y=110)
+b2.place(x=size_canvas_x + menu_x//2 - b2.winfo_reqwidth() // 2, y=110)
 
 
 # отрисовка кружочка и крестика на игровом поле
@@ -336,8 +340,7 @@ def hod_computer():
         print(winner, winner_add)
         points1 = [[10 for i in range(s_x)] for i in range(s_y)]
         points2 = [[10 for i in range(s_x)] for i in range(s_y)]
-        id1 = canvas.create_rectangle(step_x * 3, step_y * 3,
-                                      size_canvas_x + menu_x + size_canvas_x - step_x * 3,
+        id1 = canvas.create_rectangle(step_x * 3, step_y * 3, size_canvas_x + menu_x + size_canvas_x - step_x * 3,
                                       size_canvas_y - step_y, fill="blue")
         list_ids.append(id1)
         id2 = canvas.create_rectangle(step_x * 3 + step_x // 2, step_y * 3 + step_y // 2,
@@ -379,16 +382,14 @@ def add_to_all(event):
                 winner_add = 'Все корабли противника Игрока №1 подбиты'
                 points1 = [[10 for i in range(s_x)] for i in range(s_y)]
                 points2 = [[10 for i in range(s_x)] for i in range(s_y)]
-                id1 = canvas.create_rectangle(step_x * 3, step_y * 3,
-                                              size_canvas_x + menu_x + size_canvas_x - step_x * 3,
-                                              size_canvas_y - step_y, fill="blue")
+                id1 = canvas.create_rectangle(step_x*3, size_canvas_y // 2, size_canvas_x + menu_x + size_canvas_x-step_x*3, size_canvas_y // 2+step_y+step_y // 2 + 50 + 25 + step_y // 2, fill="blue")
                 list_ids.append(id1)
-                id2 = canvas.create_rectangle(step_x * 3 + step_x // 2, step_y * 3 + step_y // 2,
-                                              size_canvas_x + menu_x + size_canvas_x - step_x * 3 - step_x // 2,
-                                              size_canvas_y - step_y - step_y // 2, fill="yellow")
+                id2 = canvas.create_rectangle(step_x * 3+step_x//2, size_canvas_y // 2 +step_y//2,
+                                              size_canvas_x + menu_x + size_canvas_x - step_x * 3 - step_x//2,
+                                              size_canvas_y // 2+step_y+step_y // 2 + 50 + 25 + step_y // 2 - step_y//2, fill="yellow")
                 list_ids.append(id2)
-                id3 = canvas.create_text(step_x * 10, step_y * 5, text=winner, font=("Arial", 50), justify=CENTER)
-                id4 = canvas.create_text(step_x * 10, step_y * 6, text=winner_add, font=("Arial", 25), justify=CENTER)
+                id3 = canvas.create_text(size_canvas_x+menu_x//2, size_canvas_y // 2+step_y+step_y // 2, text=winner, font=("Arial", 50), justify=CENTER)
+                id4 = canvas.create_text(size_canvas_x+menu_x//2, size_canvas_y // 2+step_y+step_y // 2 + 50, text=winner_add, font=("Arial", 25), justify=CENTER)
                 list_ids.append(id3)
                 list_ids.append(id4)
 
@@ -408,16 +409,20 @@ def add_to_all(event):
                 winner_add = 'Все корабли противника Игрока №2 подбиты'
                 points1 = [[10 for i in range(s_x)] for i in range(s_y)]
                 points2 = [[10 for i in range(s_x)] for i in range(s_y)]
-                id1 = canvas.create_rectangle(step_x * 3, step_y * 3,
+                id1 = canvas.create_rectangle(step_x * 3, size_canvas_y // 2,
                                               size_canvas_x + menu_x + size_canvas_x - step_x * 3,
-                                              size_canvas_y - step_y, fill="blue")
+                                              size_canvas_y // 2 + step_y + step_y // 2 + 50 + 25 + step_y // 2,
+                                              fill="blue")
                 list_ids.append(id1)
-                id2 = canvas.create_rectangle(step_x * 3 + step_x // 2, step_y * 3 + step_y // 2,
+                id2 = canvas.create_rectangle(step_x * 3 + step_x // 2, size_canvas_y // 2 + step_y // 2,
                                               size_canvas_x + menu_x + size_canvas_x - step_x * 3 - step_x // 2,
-                                              size_canvas_y - step_y - step_y // 2, fill="yellow")
+                                              size_canvas_y // 2 + step_y + step_y // 2 + 50 + 25 + step_y // 2 - step_y // 2,
+                                              fill="yellow")
                 list_ids.append(id2)
-                id3 = canvas.create_text(step_x * 10, step_y * 5, text=winner, font=("Arial", 50), justify=CENTER)
-                id4 = canvas.create_text(step_x * 10, step_y * 6, text=winner_add, font=("Arial", 25), justify=CENTER)
+                id3 = canvas.create_text(size_canvas_x + menu_x // 2, size_canvas_y // 2 + step_y + step_y // 2,
+                                         text=winner, font=("Arial", 50), justify=CENTER)
+                id4 = canvas.create_text(size_canvas_x + menu_x // 2, size_canvas_y // 2 + step_y + step_y // 2 + 50,
+                                         text=winner_add, font=("Arial", 25), justify=CENTER)
                 list_ids.append(id3)
                 list_ids.append(id4)
             elif computer_vs_human:
